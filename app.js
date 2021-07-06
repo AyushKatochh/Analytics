@@ -1,13 +1,14 @@
 //jshint esversion:6
-
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
 const https = require("https");
-const dotEnv = require('dotenv').config();
-
-
+const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 
 const app = express();
@@ -15,9 +16,39 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
+
+
+app.use(session({
+  secret: "My name is Ayush",
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.use(express.static("public"));
 
-let posts = [];
+mongoose.connect("mongodb://localhost:27017/userDB", {useNewUrlParser: true});
+mongoose.set("useCreateIndex", true)
+
+const userSchema = new mongoose.Schema ({
+  email: String,
+  password: String
+});
+
+userSchema.plugin(passportLocalMongoose);
+
+
+const User = new mongoose.model("User", userSchema);
+
+passport.use(User.createStrategy());
+
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.get("/", function(req, res){
   res.render("home");
@@ -31,63 +62,70 @@ app.get("/videos", function(req, res){
   res.render("videos");
 });
 
-app.get("/analytics", function(req, res) {
-  res.render("analytics");
+app.get("/login", function(req, res) {
+  res.render("login");
 })
 
 app.get("/signup", function(req, res){
   res.render("signup");
 });
 
-
-
-app.post("/", function(req, res){
-  const firstName = req.body.fName;
-  const lastName = req.body.lName;
-  const email = req.body.email;
-
-  const data = {
-      members: [
-          {
-            email_address: email,
-            status: "subscribed",
-            merge_fields: {
-                FNAME: firstName,
-                LNAME: lastName
-            }
-          }
-      ]
-  };
-
-  const jsonData = JSON.stringify(data);
-
-  const url = "https://us17.api.mailchimp.com/3.0/lists/e83041e054";
-
-  const options = {
-      method: "POST",
-      auth: process.env.API_KEY
+app.get("/analytics", function(req, res) {
+  if (req.isAuthenticated()) {
+    res.render("analytics");
+  } else {
+    res.redirect("/login");
   }
+})
 
- const request =  https.request(url, options, function(response){
+app.get("/logout",(req, res) => {
+  req.logout();
+  res.redirect("/");
+})
 
-     if (response.statusCode === 200) {
-     
-        res.render("success", {aboutContent: aboutContent});
-      
-     } else {
-     
-        res.render("failure", {aboutContent: aboutContent});
-    
-     }
 
-         response.on("data", function(data){
-             console.log(JSON.parse(data));
-         })
+
+app.post("/signup", (req, res) => {
+  
+  User.register({username: req.body.username}, req.body.password, (err, user) => {
+    if (err) {
+      console.log(err);
+      res.redirect("/signup");
+    } else {
+      passport.authenticate("local")(req, res, function(){
+        res.redirect("/login");
+      })
+    }
   })
-  request.write(jsonData);
-request.end();
+   
+  })
 
-});
+
+  
+ 
+
+
+app.post("/login", function(req, res) {
+   const user = new User({
+     username: req.body.username,
+     password: req.body.password
+   });
+
+   req.login(user, function(err){
+     if (err) {
+       console.log(err);
+     } else {
+       passport.authenticate("local")(req, res, () => {
+         res.redirect("/analytics")
+       })
+     }
+   })
+
+})
+
+
+
+
 
 
 
