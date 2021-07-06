@@ -1,23 +1,32 @@
-<%- include("partials/header"); -%>
-<section id="submit" class="text-center">
-   
-        <form action ="/" class="form-signin" method="POST">
-      <img class="mb-4" src="images/logo12.png" alt="" width="150" height="150">
-      <h1 class="h3 mb-3 font-weight-normal">Sign Up to the 5 AM  Fan Site by Routein Relife</h1>
-      
-      
-      <input type="text"  name="fName" class="form-control top" placeholder="First Name" required-autofocus>
-      <input type="text"  name="lName" class="form-control middle" placeholder="Last Name" required>
-      <input type="email" name="email" class="form-control bottom" placeholder="Email" required>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
-         
-     
-    </form>
+<%- include('partials/header') %>
+<section>
+<div class="container mt-5">
+  <h1 class="z1">Register</h1>
+
+  <div class="row r1">
+    <div class="col-sm-8">
+      <div class="card">
+        <div class="card-body">
+
+          <!-- Makes POST request to /register route -->
+          <form action="/signup" method="POST">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-dark">Register</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 </section>
 
-
-   
-    
-
-
-<%- include("partials/footer"); -%>
+<%- include('partials/footer') %>
