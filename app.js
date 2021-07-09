@@ -6,12 +6,17 @@ const ejs = require("ejs");
 const _ = require("lodash");
 const https = require("https");
 const mongoose = require("mongoose");
+const assert = require("assert");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const { count } = require('console');
 
 
-const app = express();
+
+const app = require('express')();
+
+
 
 app.set('view engine', 'ejs');
 
@@ -43,11 +48,22 @@ userSchema.plugin(passportLocalMongoose);
 
 const User = new mongoose.model("User", userSchema);
 
+
+// Function for user count
+ 
+  User.find().exec(function (err, results) {
+  var count = results.length
+  console.log(count); 
+});
+
+
+
 passport.use(User.createStrategy());
 
 // use static serialize and deserialize of model for passport session support
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
 
 
 app.get("/", function(req, res){
@@ -72,7 +88,7 @@ app.get("/signup", function(req, res){
 
 app.get("/analytics", function(req, res) {
   if (req.isAuthenticated()) {
-    res.render("analytics");
+    res.render("analytics", {count: count});
   } else {
     res.redirect("/login");
   }
