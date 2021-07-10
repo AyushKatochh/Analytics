@@ -5,16 +5,18 @@
 <header class="a8">
     <h1>Animated Counter</h1>
 </header>
-<section class="counters">
+<section class="v2">
     <div class="container a9">
+
         <div>
             <i class="fas fa-address-book fa-4x"></i>
             <div class="counter count1" >0</div>
             <h3>Total Page Views</h3>
         </div>
+        
         <div>
             <i class="fas fa-users fa-4x"></i>
-            <div class="counter count2"><h1><%= count %></h1></div>
+            <div class="counter count2"><h3><%= count1 %></h3></div>
             <h3>Users</h3>
         </div>
         <div>
@@ -22,12 +24,45 @@
             <div class="counter count3">0</div>
             <h3>Average Time Spent</h3>
         </div>
+        <div>
+            <i class="fas fa-eye fa-4x"></i>
+            <div class="counter count3"><p id="output"></p></div>
+            <h3>Website Views</h3>
+        </div>
+       
        
     </div>
-
+ 
     <a class="btn b1 btn-light btn-lg" href="/logout" role="button">Log Out</a>
 </section>
+<script>
+     
+ // Check browser support
+if (typeof(Storage) != "undefined") {
 
+//check if the user already has visited
+if (localStorage.getItem("count") === "undefined") {
+    //set the first time if it does not exist yet
+    localStorage.setItem("count", "1");
+}
+
+//get current count
+var count = localStorage.getItem("count");
+
+//increment count by 1
+count++;
+
+//set new value to storage
+localStorage.setItem("count", count);
+
+//display value
+document.getElementById("output").innerHTML = count
+
+} else {
+
+document.getElementById("output").innerHTML = "Sorry, your browser does not support";
+}
+</script>
 
 
 
