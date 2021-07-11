@@ -3,13 +3,13 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const _ = require("lodash");
-const https = require("https");
+
 const mongoose = require("mongoose");
-const assert = require("assert");
+
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+
 
 
 
@@ -52,7 +52,8 @@ const User = new mongoose.model("User", userSchema);
 // Function for user count
  
  
-  let  count = 0;
+ // let  count1 = 0;
+  
 
 //   User.find().exec(function (err, results) {
 //    count = results.length
@@ -61,10 +62,18 @@ const User = new mongoose.model("User", userSchema);
 
 
 
-User.countDocuments({}, (err, users) => {
-  count = users
-  console.log(count);
-})
+// User.countDocuments({}, (err, users) => {
+//   count1 = users
+//   console.log(count1);
+// })
+
+
+let count1 = User.countDocuments({}, (err, users) => {
+     count1 = users
+     console.log(count1);
+    })
+
+
 
 
 
@@ -100,7 +109,7 @@ app.get("/signup", function(req, res){
 
 app.get("/analytics", function(req, res) {
   if (req.isAuthenticated()) {
-    res.render("analytics", {count : count});
+    res.render("analytics", {count1: count1});
   } else {
     res.redirect("/login");
   }
@@ -121,12 +130,15 @@ app.post("/signup", (req, res) => {
       res.redirect("/signup");
     } else {
       passport.authenticate("local")(req, res, function(){
+        count1++
         res.redirect("/login");
       })
     }
   })
    
   })
+
+  
 
 
   
@@ -144,7 +156,8 @@ app.post("/login", function(req, res) {
        console.log(err);
      } else {
        passport.authenticate("local")(req, res, () => {
-         res.redirect("/analytics")
+        res.redirect("/analytics")
+
        })
      }
    })
@@ -157,6 +170,8 @@ app.post("/login", function(req, res) {
 
 
 
-app.listen( process.env.PORT || 3000, function() {
-  console.log("Server started on port 3000");
-});
+app.listen(process.env.PORT || 3000, () => {
+
+    console.log("Server Started on Port 3000");
+  
+})
