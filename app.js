@@ -135,51 +135,19 @@ app.get("/", function(req, res){
 
 
 app.get("/about", function(req, res){
-  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
-    if (err) throw err;
-    if(!counter){
-       res.render('about');
-    }
-    else{
-      res.render('about', {counter: counter.count});
-    }
- });
+ res.render("about");
 });
 
 app.get("/videos", function(req, res){
-  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
-    if (err) throw err;
-    if(!counter){
-       res.render('videos');
-    }
-    else{
-      res.render('videos', {counter: counter.count});
-    }
- });
+ res.render("videos");
 });
 
 app.get("/login", function(req, res) {
-  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
-    if (err) throw err;
-    if(!counter){
-       res.render('login');
-    }
-    else{
-      res.render('login', {counter: counter.count});
-    }
- });
+ res.render("login");
 })
 
 app.get("/signup", function(req, res){
-  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
-    if (err) throw err;
-    if(!counter){
-       res.render('signup');
-    }
-    else{
-      res.render('signup', {counter: counter.count});
-    }
- });
+ res.render("signup")
 });
 
 
@@ -191,15 +159,7 @@ app.get("/logout",(req, res) => {
 
 app.get("/analytics", function(req, res) {
  
-  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
-    if (err) throw err;
-    if(!counter){
-       res.render('analytics', {counter: counter, count1: count1});
-    }
-    else{
-      res.render('analytics', {counter: counter, count1: count1});
-    }
- });
+res.render("analytics", {count1: count1})
 })
 
 
