@@ -43,10 +43,34 @@ const userSchema = new mongoose.Schema ({
   password: String
 });
 
+const StatSchema = mongoose.Schema({
+  name: {
+      type: String,
+  },
+  count: {
+      type: Number,
+  }
+  
+});
+
+
+
+
+
 userSchema.plugin(passportLocalMongoose);
 
 
-const User = new mongoose.model("User", userSchema);
+const User = new mongoose.model("User", userSchema, "userDB");
+const Stat = new mongoose.model("Stat", StatSchema, "userDB");
+
+
+
+
+
+Stat.insert({
+  "name" : "counter",
+  "count" : 0,
+})
 
 
 // Function for user count
@@ -88,8 +112,17 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.get("/", function(req, res){
-  res.render("home");
+  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
+    if (err) throw err;
+    if(!counter){
+       res.render('home');
+    }
+    else{
+      res.render('home');
+    }
+ });
 });
+
 
 app.get("/about", function(req, res){
   res.render("about");
@@ -107,6 +140,13 @@ app.get("/signup", function(req, res){
   res.render("signup");
 });
 
+
+app.get("/logout",(req, res) => {
+  req.logout();
+  res.redirect("/");
+
+})
+
 app.get("/analytics", function(req, res) {
   if (req.isAuthenticated()) {
     res.render("analytics", {count1: count1});
@@ -115,10 +155,7 @@ app.get("/analytics", function(req, res) {
   }
 })
 
-app.get("/logout",(req, res) => {
-  req.logout();
-  res.redirect("/");
-})
+
 
 
 
