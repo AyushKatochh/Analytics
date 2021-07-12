@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema ({
   password: String
 });
 
-const StatSchema = mongoose.Schema({
+const statSchema =new mongoose.Schema({
   name: {
       type: String,
   },
@@ -61,7 +61,7 @@ userSchema.plugin(passportLocalMongoose);
 
 
 const User = new mongoose.model("User", userSchema, "userDB");
-const Stat = new mongoose.model("Stat", StatSchema, "userDB");
+const Stat = new mongoose.model("Stat", statSchema, "userDB");
 
 
 
