@@ -9,8 +9,8 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-
-
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
 
 
 
@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema ({
   password: String
 });
 
-const statSchema =new mongoose.Schema({
+const StatSchema = mongoose.Schema({
   name: {
       type: String,
   },
@@ -61,17 +61,27 @@ userSchema.plugin(passportLocalMongoose);
 
 
 const User = new mongoose.model("User", userSchema, "userDB");
-const Stat = new mongoose.model("Stat", statSchema, "userDB");
+const Stat = new mongoose.model("Stat", StatSchema, "userDB");
 
 
 
+// Stat.insertOne(myObject, function(err, res) {
+//   if (err) throw err;
+//   console.log("1 document inserted");
+// });
 
-
-Stat.insert({
-  "name" : "counter",
-  "count" : 0,
-})
-
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("userDB");
+  var myObject = {"name" : "counter", "count" : 0};
+  dbo.collection("Stat").insertOne(myObject, function(err, res) {
+    if (err){
+      console.log(err);
+    }  else {
+      console.log("1 document inserted");
+    }
+  });
+});
 
 // Function for user count
  
@@ -118,26 +128,58 @@ app.get("/", function(req, res){
        res.render('home');
     }
     else{
-      res.render('home');
+      res.render('home', {counter: counter.count});
     }
  });
 });
 
 
 app.get("/about", function(req, res){
-  res.render("about");
+  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
+    if (err) throw err;
+    if(!counter){
+       res.render('about');
+    }
+    else{
+      res.render('about', {counter: counter.count});
+    }
+ });
 });
 
 app.get("/videos", function(req, res){
-  res.render("videos");
+  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
+    if (err) throw err;
+    if(!counter){
+       res.render('videos');
+    }
+    else{
+      res.render('videos', {counter: counter.count});
+    }
+ });
 });
 
 app.get("/login", function(req, res) {
-  res.render("login");
+  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
+    if (err) throw err;
+    if(!counter){
+       res.render('login');
+    }
+    else{
+      res.render('login', {counter: counter.count});
+    }
+ });
 })
 
 app.get("/signup", function(req, res){
-  res.render("signup");
+  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
+    if (err) throw err;
+    if(!counter){
+       res.render('signup');
+    }
+    else{
+      res.render('signup', {counter: counter.count});
+    }
+ });
 });
 
 
@@ -148,11 +190,16 @@ app.get("/logout",(req, res) => {
 })
 
 app.get("/analytics", function(req, res) {
-  if (req.isAuthenticated()) {
-    res.render("analytics", {count1: count1});
-  } else {
-    res.redirect("/login");
-  }
+ 
+  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
+    if (err) throw err;
+    if(!counter){
+       res.render('analytics', {counter: counter, count1: count1});
+    }
+    else{
+      res.render('analytics', {counter: counter, count1: count1});
+    }
+ });
 })
 
 
