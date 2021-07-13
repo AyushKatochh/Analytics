@@ -126,13 +126,13 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-let myObject = `{"totalpageViews": 0, "homePageViews": 0, "videoPageViews": 0, "signupPageViews": 0,
+let myObject = `{ "homePageViews": 0, "videoPageViews": 0, "signupPageViews": 0,
  "loginPageViews": 0}`;
 
 let Object1 = JSON.parse(myObject);
 
 
-let totalPageViews = Object1.totalPageViews;
+// let totalPageViews = Object1.totalPageViews;
 let homePageViews = Object1.homePageViews;
 let videoPageViews = Object1.videoPageViews;
 let loginPageViews = Object1.loginPageViews;
