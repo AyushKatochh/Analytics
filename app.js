@@ -126,26 +126,26 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-let myObject = `{ "homePageViews": 0, "videoPageViews": 0, "signupPageViews": 0,
+let myObject = `{"homePageViews": 0, "videoPageViews": 0, "signupPageViews": 0,
  "loginPageViews": 0}`;
 
 let Object1 = JSON.parse(myObject);
 
 
-// let totalPageViews = Object1.totalPageViews;
+//let totalPageViews = Object1.totalPageViews;
 let homePageViews = Object1.homePageViews;
 let videoPageViews = Object1.videoPageViews;
 let loginPageViews = Object1.loginPageViews;
 let signupPageViews = Object1.signupPageViews;
 
 
-
+let pageViews = 0;
 
 
 
  
 app.get("/", function(req, res){
-  
+  pageViews++
   homePageViews++
   res.render("home", {homePageViews: homePageViews});
 });
@@ -157,17 +157,20 @@ app.get("/", function(req, res){
 // });
 
 app.get("/videos", function(req, res){
+  pageViews++
   videoPageViews++
   res.render("videos", {videoPageViews: videoPageViews});
 });
 
 app.get("/login", function(req, res) {
+  pageViews++
   loginPageViews++
  
   res.render("login", {loginPageViews: loginPageViews});
 })
 
 app.get("/signup", function(req, res){
+  pageViews++
   signupPageViews++
  
  res.render("signup", {signupPageViews: signupPageViews})
@@ -181,8 +184,8 @@ app.get("/logout",(req, res) => {
 })
 
 app.get("/analytics", function(req, res) {
- 
-res.render("analytics", { count1: count1});
+ pageViews++
+res.render("analytics", { count1: count1, pageViews: pageViews});
 })
 
 
