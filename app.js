@@ -43,15 +43,15 @@ const userSchema = new mongoose.Schema ({
   password: String
 });
 
-const StatSchema = mongoose.Schema({
-  name: {
-      type: String,
-  },
-  count: {
-      type: Number,
-  }
+// const StatSchema = mongoose.Schema({
+//   name: {
+//       type: String,
+//   },
+//   count: {
+//       type: Number,
+//   }
   
-});
+// });
 
 
 
@@ -61,7 +61,7 @@ userSchema.plugin(passportLocalMongoose);
 
 
 const User = new mongoose.model("User", userSchema, "userDB");
-const Stat = new mongoose.model("Stat", StatSchema, "userDB");
+// const Stat = new mongoose.model("Stat", StatSchema, "userDB");
 
 
 
@@ -70,18 +70,24 @@ const Stat = new mongoose.model("Stat", StatSchema, "userDB");
 //   console.log("1 document inserted");
 // });
 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("userDB");
-  var myObject = {"name" : "counter", "count" : 0};
-  dbo.collection("Stat").insertOne(myObject, function(err, res) {
-    if (err){
-      console.log(err);
-    }  else {
-      console.log("1 document inserted");
-    }
-  });
-});
+
+// var myObject1 = {"name" : "counter", "count" : 0};
+// MongoClient.connect(url, function(err, db) {
+//   if (err) throw err;
+//   var dbo = db.db("userDB");
+  
+//   dbo.collection("Stat").insertOne(myObject1, function(err, res) {
+//     if (err){
+//       console.log(err);
+//     }  else {
+//       console.log("1 document inserted");
+//     }
+//   });
+// });
+
+
+
+
 
 // Function for user count
  
@@ -120,34 +126,51 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
+let myObject = `{"totalpageViews": 0, "homePageViews": 0, "videoPageViews": 0, "signupPageViews": 0,
+ "loginPageViews": 0}`;
 
+let Object1 = JSON.parse(myObject);
+
+
+let totalPageViews = Object1.totalPageViews;
+let homePageViews = Object1.homePageViews;
+let videoPageViews = Object1.videoPageViews;
+let loginPageViews = Object1.loginPageViews;
+let signupPageViews = Object1.signupPageViews;
+
+
+
+
+
+
+ 
 app.get("/", function(req, res){
-  Stat.findOneAndUpdate({name: "counter"}, { $inc: { count: 1 }}, function(err, counter) {
-    if (err) throw err;
-    if(!counter){
-       res.render('home');
-    }
-    else{
-      res.render('home', {counter: counter.count});
-    }
- });
+  
+  homePageViews++
+  res.render("home", {homePageViews: homePageViews});
 });
 
 
-app.get("/about", function(req, res){
- res.render("about");
-});
+// app.get("/about", function(req, res){
+//   totalPageViews++
+//  res.render("about");
+// });
 
 app.get("/videos", function(req, res){
- res.render("videos");
+  videoPageViews++
+  res.render("videos", {videoPageViews: videoPageViews});
 });
 
 app.get("/login", function(req, res) {
- res.render("login");
+  loginPageViews++
+ 
+  res.render("login", {loginPageViews: loginPageViews});
 })
 
 app.get("/signup", function(req, res){
- res.render("signup")
+  signupPageViews++
+ 
+ res.render("signup", {signupPageViews: signupPageViews})
 });
 
 
@@ -159,7 +182,7 @@ app.get("/logout",(req, res) => {
 
 app.get("/analytics", function(req, res) {
  
-res.render("analytics", {count1: count1})
+res.render("analytics", { count1: count1});
 })
 
 
@@ -173,6 +196,7 @@ app.post("/signup", (req, res) => {
       console.log(err);
       res.redirect("/signup");
     } else {
+
       passport.authenticate("local")(req, res, function(){
         count1++
         res.redirect("/login");
