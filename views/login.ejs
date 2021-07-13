@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
 <div class="container mt-5">
-  <h1>Login</h1>
+  <h1 class="login">Login</h1>
 
   <div class="row">
     <div class="col-sm-8">
@@ -18,7 +18,7 @@
               <label for="password">Password</label>
               <input type="password" class="form-control" name="password">
             </div>
-            <button type="submit" class="btn btn-dark">Login</button>
+            <button type="submit" class="button1 btn btn-dark">Login</button>
           </form>
 
         </div>
@@ -29,4 +29,11 @@
   </div>
 </div>
 
+<section class="v2">
+<div>
+  <i class="fas fa-address-book fa-4x"></i>
+  <div class="counter count3"><h1><%= loginPageViews %></h1></div>
+  <h3>Page Views</h3>
+</div>
+</section>
 <%- include('partials/footer') %>
