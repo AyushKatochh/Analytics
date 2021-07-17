@@ -10,10 +10,28 @@
         <i class="social-icon fab fa-twitter"></i>
         <i class="social-icon fab fa-instagram"></i>
         <i class="social-icon fas fa-envelope"></i>
-        <p class="word"> &copy; Ayush Katoch  ©  2020 Routein Relife  &copy; 5 AM STUDIOS</p>
+        <p class="word"> &copy; Ayush Katoch  ©  2021 Routein Relife  &copy; 5 AM STUDIOS</p>
       </div>
     
   </div>
 </div>
+<script>
+  (async ()=>{
+
+let firstTimeUser = true;
+if(localStorage.getItem("userViews")){
+    firstTimeUser = false;
+}
+
+
+let path = window.location.pathname;
+const response = await fetch('/recordPageView', {
+method: 'POST', 
+
+body: JSON.stringify({path,firstTimeUser}) // body data type must match "Content-Type" header
+});
+})()
+
+</script>
 </body>
 </html>
