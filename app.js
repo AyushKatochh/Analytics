@@ -13,8 +13,8 @@ const app = require("express")();
 
 //Setting up Middleware
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Setting up session cookies
 app.use(
@@ -45,10 +45,17 @@ const StatSchema = new mongoose.Schema({
   date: Number,
 });
 
+const perSessionSchema = new mongoose.Schema({
+  id: String,
+  date: Number,
+  time: Number,
+});
+
 userSchema.plugin(passportLocalMongoose);
 
 const User = new mongoose.model("User", userSchema);
 const StatModel = new mongoose.model("Stat", StatSchema);
+const SessionModel = new mongoose.model("SessionModel", perSessionSchema);
 
 // Serializing and Deserializing cookies
 
@@ -57,28 +64,33 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Setting up Routes
+
 app.get("/", (req, res) => {
+  totalPageViews++;
   res.render("home");
 });
 
 app.get("/videos", (req, res) => {
+  totalPageViews++;
   res.render("videos");
 });
 
 app.get("/signup", (req, res) => {
+  totalPageViews++;
   res.render("signup");
 });
 
 app.get("/login", (req, res) => {
+  totalPageViews++;
   res.render("login");
 });
 
 app.get("/logout", (req, res) => {
-  req.logout();
   res.redirect("/");
 });
 
 let count = 0;
+let totalPageViews = 0;
 app.post("/recordPageView", async (req, res) => {
   try {
     let { path, firstTimeUser } = req.body;
@@ -92,10 +104,6 @@ app.post("/recordPageView", async (req, res) => {
           count = users;
         }
       });
-
-      async () => {
-        await count.save();
-      };
     }
 
     const pathData = new StatModel({ path, date: new Date() });
@@ -126,22 +134,48 @@ app.post("/signup", (req, res) => {
   );
 });
 
+async () => {
+  await count.save();
+  console.log(count);
+};
+
 app.get("/analytics", (req, res) => {
-  res.render("analytics", { count: count });
+  totalPageViews++;
+  res.render("analytics", {
+    count: count,
+    totalPageViews: totalPageViews,
+  });
 });
 
+let userSessionId = "";
 app.post("/login", (req, res) => {
   const user = new User({
     username: req.body.username,
     password: req.body.password,
   });
-
   req.login(user, (err) => {
     if (err) {
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, () => {
         res.redirect("/analytics");
+        if (req.isAuthenticated()) {
+          console.log("User is Authenticated");
+          let userSessionId = req.sessionID;
+          console.log(userSessionId);
+
+          const userSessionSave = new SessionModel({
+            id: userSessionId,
+            date: new Date().getDate(),
+            time: new Date().getTime(),
+          });
+          async () => {
+            await userSessionSave
+              .save()
+              .then(console.log("user id, date and time are saved"));
+          };
+          res.send({ success: true });
+        }
       });
     }
   });
