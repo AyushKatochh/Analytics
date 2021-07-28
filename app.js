@@ -158,7 +158,7 @@ app.post("/login", (req, res) => {
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, () => {
-        res.redirect("/analytics");
+        // res.redirect("/analytics");
         if (req.isAuthenticated()) {
           console.log("User is Authenticated");
           let userSessionId = req.sessionID;
@@ -170,11 +170,9 @@ app.post("/login", (req, res) => {
             time: new Date().getTime(),
           });
           async () => {
-            await userSessionSave
-              .save()
-              .then(console.log("user id, date and time are saved"));
+            await userSessionSave.save().then(console.log(userSessionSave));
           };
-          res.send({ success: true });
+          res.redirect("/analytics");
         }
       });
     }
