@@ -32,7 +32,7 @@ app.use(passport.session());
 app.use(express.static("public"));
 
 // Mongodb Setup
-mongoose.connect("mongodb://localhost:27017/myDB", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/someDB", { useNewUrlParser: true });
 mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
@@ -54,7 +54,7 @@ const perSessionSchema = new mongoose.Schema({
 userSchema.plugin(passportLocalMongoose);
 
 const User = new mongoose.model("User", userSchema);
-const StatModel = new mongoose.model("Stat", StatSchema);
+const StatModel = new mongoose.model("StatModel", StatSchema);
 const SessionModel = new mongoose.model("SessionModel", perSessionSchema);
 
 // Serializing and Deserializing cookies
@@ -89,22 +89,34 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-let count = 0;
+// Saving unique user count
+let count = User.countDocuments({}, (err, User) => {
+  if (err) {
+    console.log(err);
+  } else {
+    count = User;
+  }
+});
+
+async () => {
+  await count.save().then(console.log("Saved"));
+};
+
 let totalPageViews = 0;
 app.post("/recordPageView", async (req, res) => {
   try {
     let { path, firstTimeUser } = req.body;
 
-    if (firstTimeUser) {
-      // find document from mongo and increse unique user count by 1 and save back
-      let count = User.countDocuments({}, (err, users) => {
-        if (err) {
-          console.log(err);
-        } else {
-          count = users;
-        }
-      });
-    }
+    // if (firstTimeUser) {
+    //   find document from mongo and increse unique user count by 1 and save back
+    //   let count = User.countDocuments({}, (err, User) => {
+    //     if (err) {
+    //       console.log(err);
+    //     } else {
+    //       count = User;
+    //     }
+    //   });
+    // }
 
     const pathData = new StatModel({ path, date: new Date() });
     async () => {
@@ -134,11 +146,6 @@ app.post("/signup", (req, res) => {
   );
 });
 
-async () => {
-  await count.save();
-  console.log(count);
-};
-
 app.get("/analytics", (req, res) => {
   totalPageViews++;
   res.render("analytics", {
@@ -158,7 +165,6 @@ app.post("/login", (req, res) => {
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, () => {
-        // res.redirect("/analytics");
         if (req.isAuthenticated()) {
           console.log("User is Authenticated");
           let userSessionId = req.sessionID;
