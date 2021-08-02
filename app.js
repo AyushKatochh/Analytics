@@ -63,26 +63,44 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Counter Variables
+let homePageCounter = 0;
+let videoPageCounter = 0;
+let loginPageCounter = 0;
+let signupPageCounter = 0;
+
 // Setting up Routes
 
 app.get("/", (req, res) => {
   totalPageViews++;
-  res.render("home");
+
+  // Under Progress
+  homePageCounter++;
+  res.render("home", { homePageCounter: homePageCounter });
 });
 
 app.get("/videos", (req, res) => {
   totalPageViews++;
-  res.render("videos");
+
+  // Under Progress
+  videoPageCounter++;
+  res.render("videos", { videoPageCounter: videoPageCounter });
 });
 
 app.get("/signup", (req, res) => {
   totalPageViews++;
-  res.render("signup");
+
+  // Under Progress
+  signupPageCounter++;
+  res.render("signup", { signupPageCounter: signupPageCounter });
 });
 
 app.get("/login", (req, res) => {
   totalPageViews++;
-  res.render("login");
+
+  //Under Progress
+  loginPageCounter++;
+  res.render("login", { loginPageCounter: loginPageCounter });
 });
 
 app.get("/logout", (req, res) => {
@@ -154,7 +172,7 @@ app.get("/analytics", (req, res) => {
   });
 });
 
-let userSessionId = "";
+let userSessionId = null;
 app.post("/login", (req, res) => {
   const user = new User({
     username: req.body.username,
