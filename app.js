@@ -121,6 +121,7 @@ async () => {
 };
 
 let totalPageViews = 0;
+// It will post request to all the pages and page views will increase
 app.post("/recordPageView", async (req, res) => {
   try {
     let { path, firstTimeUser } = req.body;
