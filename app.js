@@ -9,7 +9,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 
 // Creating express app
-const app = require("express")();
+const app = express();
 
 //Setting up Middleware
 app.set("view engine", "ejs");
@@ -121,20 +121,16 @@ async () => {
 };
 
 let totalPageViews = 0;
-// It will post request to all the pages and page views will increase
 app.post("/recordPageView", async (req, res) => {
   try {
     let { path, firstTimeUser } = req.body;
 
     // if (firstTimeUser) {
-    //   find document from mongo and increse unique user count by 1 and save back
-    //   let count = User.countDocuments({}, (err, User) => {
-    //     if (err) {
-    //       console.log(err);
-    //     } else {
-    //       count = User;
-    //     }
-    //   });
+    //   // find document from mongo and increse unique user count by 1 and save back
+    //   count++;
+    //   console.log(count);
+    // } else {
+    //   console.log("Old User");
     // }
 
     const pathData = new StatModel({ path, date: new Date() });
@@ -173,7 +169,6 @@ app.get("/analytics", (req, res) => {
   });
 });
 
-let userSessionId = null;
 app.post("/login", (req, res) => {
   const user = new User({
     username: req.body.username,
@@ -198,12 +193,19 @@ app.post("/login", (req, res) => {
             await userSessionSave.save().then(console.log(userSessionSave));
           };
           res.redirect("/analytics");
+          userSessionSave.find({}, (err, loggedUser) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(loggedUser);
+            }
+          });
         }
       });
     }
   });
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server Started on Port 3000");
+app.listen(process.env.PORT || 8000, () => {
+  console.log("Server Started on Port 8000");
 });
