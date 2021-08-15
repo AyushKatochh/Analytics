@@ -27,6 +27,8 @@
 7. hashing and salting
 8. dotenv variable hiding
 9. gitignore
+10. Dynamic Routing
+11. React Router(For ease)
 
 # Steps to Start
 1. Clone the project
