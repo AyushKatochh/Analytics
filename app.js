@@ -36,6 +36,7 @@ mongoose.connect("mongodb://localhost:27017/someDB", { useNewUrlParser: true });
 mongoose.set("useCreateIndex", true);
 
 // MongoDB Schema
+// Can be stored in models folder
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
