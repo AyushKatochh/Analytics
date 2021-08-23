@@ -41,5 +41,6 @@
 8. type nodemon app.js
 9. go to localhost:3000
 10. Alternative: add start script inside package.json an type "nodemon app.js"
-11. npm start
-12. Follow me🤣
+11. write mongod in cmd 
+12. npm start
+13. Follow me🤣
