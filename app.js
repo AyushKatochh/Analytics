@@ -163,6 +163,8 @@ app.post("/signup", (req, res) => {
   );
 });
 
+// Setting analytics page here
+
 app.get("/analytics", (req, res) => {
   totalPageViews++;
   res.render("analytics", {
